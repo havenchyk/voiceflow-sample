@@ -1,0 +1,23 @@
+.chat {
+  text-align: center;
+  height: calc(100vh - 3.5em - 3.5em);
+  display: flex;
+  flex-direction: column;
+}
+
+.chat--subtitle {
+  margin-top: 0;
+  padding-top: 0.5em;
+  flex-grow: 0;
+  /* flex-basis: 200px; */
+}
+
+.chat--messages {
+  flex-grow: 1;
+}
+
+
+.chat--actions {
+  flex-grow: 0;
+  flex-basis: 100px;
+}

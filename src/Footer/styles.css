@@ -1,0 +1,8 @@
+.footer {
+  height: 3.5em;
+  background-color: rebeccapurple;
+  display: flex;
+  align-items: center;
+  padding-left: 2em;
+  color: white;
+}

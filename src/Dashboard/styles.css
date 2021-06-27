@@ -1,0 +1,107 @@
+.dashboard {
+  background-color:blanchedalmond;
+  height: calc(100vh - 3.5em - 3.5em);
+}
+
+.dashboard--subtitle {
+  margin-top: 0;
+  text-align: center;
+  padding-top: 0.5em;
+}
+
+.dashboard--content {
+  display: flex;
+  justify-content: center;
+}
+
+.dashboard--actions {
+  display: flex;
+  justify-content: center;
+}
+
+.list-wrapper {
+  border-radius: 0.5em;
+  border: 1px solid black;
+  overflow: hidden;
+  padding: 1em 0;
+}
+
+.list {
+  border:  1px solid peru;
+  display: inline-flex;
+  flex-direction: column;
+  width: 30em;
+  padding-left: 0;
+  margin: 0 auto;
+  background-color: plum;
+  box-shadow: 0 0 8px 0 rgba(0,0,0, 0.08);
+  max-height: 50vh;
+  min-height: 30vh;
+  overflow-y: auto;
+}
+
+.list--item {
+  list-style: none;
+  background-color:steelblue;
+}
+
+.list--link {
+  text-decoration: none;
+  color: white;
+  display: block;
+  background-color: aquamarine;
+  padding: 1.5em;
+}
+
+.list--link:hover {
+  background-color: yellowgreen;
+}
+
+.dashboard--actions button {
+  /* cursor: pointer;
+  transition-duration: 0.15s, 0.15s, 0.15s;
+  transition-timing-function: ease, ease, ease;
+  transition-delay: initial, initial, initial;
+  transition-property: opacity, box-shadow;
+  color: rgb(255, 255, 255);
+  box-shadow: rgba(17, 49, 96, 0.1) 0px 0px 1px 0px, rgba(17, 49, 96, 0.16) 0px 4px 8px 0px;
+  font-weight: 600;
+  background-image: linear-gradient(-180deg, rgb(93, 157, 245) 0%, rgb(23, 108, 224) 68%);
+  background-color: initial;
+  background-size: 1px 52px;
+  white-space: nowrap;
+  text-align: center;
+  height: 42px;
+  border-radius: 90px;
+  font-size: 15px;
+  padding-top: 0;
+  border: 0;
+  padding: 0 0.5em; */
+
+  padding: 5px 18px;
+  border-radius: 6px;
+  transition: background-color 150ms;
+  color: #2b343f;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  cursor:pointer;
+  padding: 8px 16px;
+  flex: 0 0 auto;
+  border: 1px solid #2c6feb;
+  background-color: #397dff;
+  box-shadow: 0 2px 8px 0 rgba(43, 47, 50, .04);
+  transition-duration: 120ms;
+  color: #fff;
+  line-height:21px;
+}
+
+.dashboard--actions button:hover {
+  background-color: #2769e2;
+}
+
+button:disabled {
+  background-color: #ddd;
+  pointer-events: none;
+  border-color: #ddd;
+}

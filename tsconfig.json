@@ -13,7 +13,7 @@
     "jsx": "react-jsx",
     "alwaysStrict": true,
     "noImplicitAny": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noImplicitThis": true,
     "strictNullChecks": true,
     "noUnusedParameters": true,

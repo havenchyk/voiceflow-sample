@@ -5,6 +5,9 @@ module.exports = {
     {
       files: ['*.ts', '*.tsx'],
       extends: ['@voiceflow/eslint-config/typescript'],
+      rules: {
+        'no-console': 'off',
+      },
     },
   ],
 };

@@ -1,6 +1,9 @@
 .dashboard {
-  background-color:blanchedalmond;
+  background-color: #f5f5f5;
   height: calc(100vh - 3.5em - 3.5em);
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
 }
 
 .dashboard--subtitle {
@@ -16,24 +19,25 @@
 
 .dashboard--actions {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 2em;
 }
 
 .list-wrapper {
-  border-radius: 0.5em;
-  border: 1px solid black;
+  /* border-radius: 0.5em; */
+  /* border: 1px solid black; */
   overflow: hidden;
-  padding: 1em 0;
+  padding: 0.5em 0;
 }
 
 .list {
-  border:  1px solid peru;
   display: inline-flex;
   flex-direction: column;
-  width: 30em;
+  width: 20em;
   padding-left: 0;
   margin: 0 auto;
-  background-color: plum;
+  background-color: #fff;
   box-shadow: 0 0 8px 0 rgba(0,0,0, 0.08);
   max-height: 50vh;
   min-height: 30vh;
@@ -42,42 +46,44 @@
 
 .list--item {
   list-style: none;
-  background-color:steelblue;
+  /* background-color:steelblue; */
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.list--item.list--item-empty {
+  padding: 4em 2em;
+}
+
+.list--item:first-child:not(.list--item-empty) {
+  padding-top: 0.5em;
+  border-top: none;
+}
+
+.list--item:last-child:not(.list--item-empty) {
+  padding-bottom: 0.5em;
 }
 
 .list--link {
   text-decoration: none;
   color: white;
   display: block;
-  background-color: aquamarine;
   padding: 1.5em;
+  color: rgba(0, 0, 0, 0.87);
+  position: relative;
+}
+
+.list--link:after {
+  content: '💬';
+  position: absolute;
+  right: 1em;
 }
 
 .list--link:hover {
-  background-color: yellowgreen;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .dashboard--actions button {
-  /* cursor: pointer;
-  transition-duration: 0.15s, 0.15s, 0.15s;
-  transition-timing-function: ease, ease, ease;
-  transition-delay: initial, initial, initial;
-  transition-property: opacity, box-shadow;
-  color: rgb(255, 255, 255);
-  box-shadow: rgba(17, 49, 96, 0.1) 0px 0px 1px 0px, rgba(17, 49, 96, 0.16) 0px 4px 8px 0px;
-  font-weight: 600;
-  background-image: linear-gradient(-180deg, rgb(93, 157, 245) 0%, rgb(23, 108, 224) 68%);
-  background-color: initial;
-  background-size: 1px 52px;
-  white-space: nowrap;
-  text-align: center;
-  height: 42px;
-  border-radius: 90px;
-  font-size: 15px;
-  padding-top: 0;
-  border: 0;
-  padding: 0 0.5em; */
-
   padding: 5px 18px;
   border-radius: 6px;
   transition: background-color 150ms;
@@ -93,7 +99,18 @@
   box-shadow: 0 2px 8px 0 rgba(43, 47, 50, .04);
   transition-duration: 120ms;
   color: #fff;
-  line-height:21px;
+}
+
+.dashboard--actions button.button-secondary {
+  background-color: white;
+  border-color: white;
+  color: black;
+  transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.dashboard--actions button.button-secondary:hover {
+  border-color: black;
+  background-color: white;
 }
 
 .dashboard--actions button:hover {
@@ -104,4 +121,14 @@ button:disabled {
   background-color: #ddd;
   pointer-events: none;
   border-color: #ddd;
+}
+
+.dashboard--buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 320px;
+}
+
+.create-user-form-wrapper {
+  width: 320px;
 }

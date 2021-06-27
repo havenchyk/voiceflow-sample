@@ -1,6 +1,6 @@
 import './styles.css';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { localStorage } from '../utils';
 
@@ -10,9 +10,19 @@ interface Props {
 
 const CreateUser = ({ onSubmit }: Props) => {
   const [name, setName] = useState('');
+  const inputNode = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputNode.current?.focus();
+  }, []);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setName(e.target.value);
+  };
+
+  const handleClose: React.FormEventHandler<HTMLButtonElement> = () => {
+    console.log('yes!');
+    onSubmit('');
   };
 
   const saveUser = () => {
@@ -44,12 +54,19 @@ const CreateUser = ({ onSubmit }: Props) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label>
-          Username: <input value={name} onChange={handleChange} />
-        </label>
+      <label className="create-user--row">
+        Username: <input ref={inputNode} value={name} onChange={handleChange} />
+      </label>
+
+      <div className="create-user--actions">
+        <button className="create-user--button" disabled={!name}>
+          Add
+        </button>
+
+        <button type="button" className="create-user--button button-secondary" onClick={handleClose}>
+          Close
+        </button>
       </div>
-      <button disabled={!name}>Add</button>
     </form>
   );
 };

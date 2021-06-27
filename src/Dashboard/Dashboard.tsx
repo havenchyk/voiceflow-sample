@@ -24,17 +24,25 @@ const Dashboard: React.FC = () => {
   const handleCreateUserSubmit = (username: string) => {
     // check that user does not exist on the list
 
-    setUsers((users) => {
-      if (users.includes(username)) {
-        return users;
-      }
+    if (username) {
+      setUsers((users) => {
+        if (users.includes(username)) {
+          return users;
+        }
 
-      return users.concat([username]);
-    });
+        return users.concat([username]);
+      });
+    }
 
-    setTimeout(() => {
-      hideUserForm();
-    }, 500);
+    // setTimeout(() => {
+    hideUserForm();
+    // }, 500);
+  };
+
+  const handleClear = () => {
+    localStorage.remove('users');
+
+    setUsers([]);
   };
 
   // initial loading from localStorage
@@ -52,10 +60,15 @@ const Dashboard: React.FC = () => {
       <div className="dashboard--content">
         <div className="list-wrapper">
           <ul className="list">
+            {users.length === 0 && (
+              <li className="list--item list--item-empty" key="no-users">
+                Please add a user to start a chat
+              </li>
+            )}
             {users.map((user, index) => (
               <li className="list--item" key={index}>
                 <Link className="list--link" to={`/chat/${user.toLowerCase()}`}>
-                  💅 {user}
+                  {user}
                 </Link>
               </li>
             ))}
@@ -64,11 +77,18 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="dashboard--actions">
-        <div>
+        <div className="dashboard--buttons">
           <button onClick={showUserForm}>Create a New User</button>
-
-          {isUserFormVisible && <CreateUser onSubmit={handleCreateUserSubmit} />}
+          <button className="button-secondary" onClick={handleClear}>
+            Clear users
+          </button>
         </div>
+
+        {isUserFormVisible && (
+          <div className="create-user-form-wrapper">
+            <CreateUser onSubmit={handleCreateUserSubmit} />
+          </div>
+        )}
       </div>
     </div>
   );

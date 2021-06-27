@@ -59,11 +59,11 @@ const CreateUser = ({ onSubmit }: Props) => {
       </label>
 
       <div className="create-user--actions">
-        <button className="create-user--button" disabled={!name}>
+        <button className="button create-user--button" disabled={!name}>
           Add
         </button>
 
-        <button type="button" className="create-user--button button-secondary" onClick={handleClose}>
+        <button type="button" className="create-user--button button button-secondary" onClick={handleClose}>
           Close
         </button>
       </div>

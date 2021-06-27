@@ -78,8 +78,10 @@ const Dashboard: React.FC = () => {
 
       <div className="dashboard--actions">
         <div className="dashboard--buttons">
-          <button onClick={showUserForm}>Create a New User</button>
-          <button className="button-secondary" onClick={handleClear}>
+          <button className="button" onClick={showUserForm}>
+            Create a New User
+          </button>
+          <button className="button button-secondary" onClick={handleClear}>
             Clear users
           </button>
         </div>

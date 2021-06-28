@@ -4,7 +4,7 @@ import { GeneralTrace } from '@voiceflow/general-types';
 import React, { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
-import { http, storage } from '../utils';
+import { api, storage } from '../utils';
 
 type UserParams = {
   userID: string;
@@ -71,7 +71,7 @@ const Chat: React.FC = () => {
     if (messages && messages.length > 0) {
       setMessages(messages);
     } else {
-      http
+      api
         .launch(userID)
         .then((traceFromLaunch) => {
           const messages = traceToMessages(traceFromLaunch);
@@ -92,7 +92,7 @@ const Chat: React.FC = () => {
 
   const sendMessage = async () => {
     try {
-      const trace = await http.interact(message, userID);
+      const trace = await api.interact(message, userID);
       const respMessages = traceToMessages(trace);
 
       setMessages((oldMessages) => oldMessages.concat(respMessages));
@@ -149,7 +149,7 @@ const Chat: React.FC = () => {
         <button
           className="button"
           onClick={() => {
-            http.fetchState(userID);
+            api.fetchState(userID);
           }}
         >
           fetch state
@@ -157,7 +157,7 @@ const Chat: React.FC = () => {
         <button
           className="button"
           onClick={() => {
-            http.launch(userID);
+            api.launch(userID);
           }}
         >
           launch
@@ -165,7 +165,7 @@ const Chat: React.FC = () => {
         <button
           className="button"
           onClick={() => {
-            http.deleteState(userID);
+            api.deleteState(userID);
           }}
         >
           delete state

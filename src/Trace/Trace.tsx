@@ -2,7 +2,7 @@ import { ChoiceTrace, GeneralTrace, PathTrace } from '@voiceflow/general-types';
 import { ImageStepData } from '@voiceflow/general-types/build/nodes/visual';
 import React from 'react';
 
-import { http } from '../utils';
+import { api } from '../utils';
 
 /**
  * This file is needed for storing the logic for rendering trace by type (wiht buttons)
@@ -36,7 +36,7 @@ const renderTrace = (object: GeneralTrace | PathTrace, index: number) => {
             key={data.name}
             onClick={async () => {
               // TODO: remove buttons
-              const trace = await http.interact((data.request.payload as any).query, userID);
+              const trace = await api.interact((data.request.payload as any).query, userID);
             }}
             className="button button-secondary"
           >

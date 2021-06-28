@@ -1,2 +1,2 @@
-export * as http from './http';
+export * as api from './api';
 export * as storage from './storage';

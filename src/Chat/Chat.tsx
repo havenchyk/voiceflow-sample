@@ -3,7 +3,7 @@ import './styles.css';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
-import { localStorage } from '../utils';
+import { http, localStorage } from '../utils';
 
 type UserParams = {
   userID: string;

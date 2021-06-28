@@ -21,7 +21,6 @@ const CreateUser = ({ onSubmit }: Props) => {
   };
 
   const handleClose: React.FormEventHandler<HTMLButtonElement> = () => {
-    console.log('yes!');
     onSubmit('');
   };
 

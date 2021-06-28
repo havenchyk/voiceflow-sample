@@ -60,4 +60,12 @@ const getMessages = (user: string) => {
   return messages;
 };
 
-export { getMessages, getUsers, removeAllUsers, removeUser, setUsers };
+const setMessages = (user: string, messages: any) => {
+  try {
+    localStorage.setItem(user, JSON.stringify(messages));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export { getMessages, getUsers, removeAllUsers, removeUser, setMessages, setUsers };

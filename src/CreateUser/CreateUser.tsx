@@ -2,8 +2,6 @@ import './styles.css';
 
 import React, { useEffect, useRef, useState } from 'react';
 
-import { localStorage } from '../utils';
-
 interface Props {
   onSubmit: (username: string) => void;
 }
@@ -24,29 +22,8 @@ const CreateUser = ({ onSubmit }: Props) => {
     onSubmit('');
   };
 
-  const saveUser = () => {
-    // TODO: consider moving this code to the localstorage service
-    const serializedUsers = localStorage.getItem('users');
-    let users = [];
-
-    if (serializedUsers) {
-      users = JSON.parse(serializedUsers);
-    }
-
-    if (users.includes(name)) {
-      console.warn(`user ${name} already exists on the list`);
-      return;
-    }
-
-    users.push(name);
-
-    localStorage.setItem('users', JSON.stringify(users));
-  };
-
   const handleSubmit: React.FormEventHandler = (e) => {
     e.preventDefault();
-
-    saveUser();
 
     onSubmit(name);
   };

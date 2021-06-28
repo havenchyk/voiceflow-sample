@@ -67,10 +67,27 @@
 .list--link {
   text-decoration: none;
   color: white;
-  display: block;
+  display: flex;
+  align-items: center;
   padding: 1.5em;
   color: rgba(0, 0, 0, 0.87);
   position: relative;
+}
+
+.list--link:hover .list--link-close-icon {
+  visibility: visible;
+}
+
+.list--link-close-icon {
+  transform: rotate(45deg);
+  position: absolute;
+  right: 1.5em;
+  font-size: 2em;
+  visibility: hidden;
+}
+
+.list--link-close-icon:hover {
+  color: red;
 }
 
 .list--link:after {

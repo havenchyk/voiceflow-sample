@@ -1,25 +1,130 @@
 import './styles.css';
 
-import React, { useEffect, useState } from 'react';
+import { ChoiceTrace, GeneralTrace, PathTrace, RequestType, TextRequest, VisualTrace } from '@voiceflow/general-types';
+import { ImageStepData } from '@voiceflow/general-types/build/nodes/visual';
+import React, { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
-import { http, localStorage } from '../utils';
+import { http, storage } from '../utils';
 
 type UserParams = {
   userID: string;
 };
 
+// trace - list of objects Trace - visual, choice, speak etc
+// it has type and payload
+// payload can be different
+
 // here we can request some data from backend and handle the error
+
+interface Message {
+  type: 'req' | 'res';
+  text: string;
+}
 
 const Chat: React.FC = () => {
   const { userID } = useParams<UserParams>();
   const [userName, setUserName] = useState<string>();
   const history = useHistory();
   const [message, setMessage] = useState('');
+  const lastRow = useRef<HTMLDivElement>(null);
+
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const [trace, setTrace] = useState<(GeneralTrace | PathTrace)[]>([]);
+
+  useEffect(() => {
+    if (!lastRow.current) return;
+
+    lastRow.current.scrollIntoView();
+  }, [messages]);
+
+  // storing messages in localstorage
+  useEffect(() => {
+    if (messages && messages.length) {
+      localStorage.setItem(userID, JSON.stringify(messages));
+    }
+  }, [messages]);
+
+  const renderTrace = (object: GeneralTrace | PathTrace, index: number) => {
+    if (object.type === 'speak') {
+      return <div>{object.payload.message}</div>;
+    }
+
+    if (object.type === 'visual') {
+      return (
+        <div>
+          <img height="90" width="120" src={(object.payload as ImageStepData).image as string} alt="visualization" />
+        </div>
+      );
+    }
+
+    if (object.type === 'choice') {
+      // if it's an active step
+      if (trace[trace.length - 1] !== object) return false;
+
+      const buttons = object.payload.buttons.map((data) => {
+        return (
+          data.name && (
+            <button
+              key={data.name}
+              onClick={async () => {
+                // TODO: remove buttons
+                const trace = await http.interact((data.request.payload as any).query, userID);
+
+                setTrace((oldTrace) => oldTrace.concat(trace));
+              }}
+              className="button button-secondary"
+            >
+              {data.name}
+            </button>
+          )
+        );
+      });
+      return <div>{buttons}</div>;
+    }
+
+    if (object.type === 'path') {
+      const choice = trace[index - 1] as ChoiceTrace;
+      const selectedValue = Number(((object.payload as any).path as string).slice(7)); // choice:1 -> 1
+
+      const button = choice.payload.buttons[selectedValue - 1];
+
+      return <div>{button.name}</div>;
+    }
+
+    if (object.type === 'end') {
+      return <hr className="separator" />;
+    }
+
+    console.warn(`rendering of type ${object.type} is broken!`);
+
+    return false;
+  };
+
+  const traceToMessages = (trace: GeneralTrace[]): Message[] => {
+    return trace.filter(({ type }) => type === 'speak').map(({ payload }) => ({ text: payload.message, type: 'res' }));
+  };
+
+  useEffect(() => {
+    const messages = storage.getMessages(userID);
+
+    if (messages && messages.length > 0) {
+      setMessages(messages);
+    } else {
+      http
+        .launch(userID)
+        .then((traceFromLaunch) => {
+          const messages = traceToMessages(traceFromLaunch);
+          return setMessages(messages);
+        })
+        .catch(console.error);
+    }
+  }, []);
 
   useEffect(() => {
     // get username from localStorage
-    const users: string[] = JSON.parse(`${localStorage.getItem('users')}`);
+    const users = storage.getUsers();
 
     if (!users) return;
 
@@ -39,28 +144,50 @@ const Chat: React.FC = () => {
     setMessage(e.target.value);
   };
 
-  const handleSendMessage = () => {
-    // send message
-    alert('message is sent!');
-
+  const handleSendMessage = async () => {
     // clear input
     setMessage('');
+
+    setMessages((oldMessages) => {
+      const newMessage: Message = {
+        text: message,
+        type: 'req',
+      };
+
+      return [...oldMessages, newMessage];
+    });
+
+    // send message
+    const trace = await http.interact(message, userID);
+
+    const respMessages = traceToMessages(trace);
+
+    setMessages((oldMessages) => oldMessages.concat(respMessages));
+    setTrace((oldTrace) => oldTrace.concat(trace));
   };
 
   return (
     <div className="chat">
       {/* likely move it to the header - it's much better */}
-      {!userName && <div>Loading...</div>}
-      {userName && <h4 className="chat--subtitle">This is a conversation for "{userName}"</h4>}
+      {!userName && <h4>Loading...</h4>}
+      {userName && <h4>This is a conversation for "{userName}"</h4>}
 
       <div className="chat--messages">
-        <dl>
-          <dt>Can I order some pizza</dt>
-          <dd>Sure what kind of pizza do you want?</dd>
+        {messages.map((message, index) => {
+          // last item is special
+          if (index === messages.length - 1) return null;
 
-          <dt>Pepperoni and Cheese</dt>
-          <dd>Great, pepperoni and cheese coming up!</dd>
-        </dl>
+          return (
+            <div className={`chat--message ${index % 2 === 0 ? '' : 'chat--message-right'}`} key={index}>
+              <span>{message.text}</span>
+            </div>
+          );
+        })}
+        {messages.length > 0 && (
+          <div ref={lastRow} className={`chat--message ${messages.length % 2 === 0 ? 'chat--message-right' : ''}`}>
+            <span>{messages[messages.length - 1].text}</span>
+          </div>
+        )}
       </div>
 
       <div className="chat--actions">
@@ -68,6 +195,31 @@ const Chat: React.FC = () => {
         <button disabled={!message} onClick={handleSendMessage} className="button chat--input-button">
           Send
         </button>
+        {/*
+        <button
+          className="button"
+          onClick={() => {
+            http.fetchState(userID);
+          }}
+        >
+          fetch state
+        </button>
+        <button
+          className="button"
+          onClick={() => {
+            http.launch(userID);
+          }}
+        >
+          launch
+        </button>
+        <button
+          className="button"
+          onClick={() => {
+            http.deleteState(userID);
+          }}
+        >
+          delete state
+        </button> */}
       </div>
     </div>
   );

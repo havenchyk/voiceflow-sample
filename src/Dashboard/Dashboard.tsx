@@ -1,58 +1,71 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import './styles.css';
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import CreateUser from '../CreateUser';
-import { localStorage } from '../utils';
-
-// const users = ['Luke', 'John', 'Adam'];
-
-// const FancyLink = React.forwardRef<any, any>((props, ref) => (
-//   <a ref={ref} className="list--link" {...props}>
-//     💅 {props.children}
-//   </a>
-// ));
+import { storage } from '../utils';
 
 // TODO: check if the users on the list before redirecting to the chat route
 const Dashboard: React.FC = () => {
   const [isUserFormVisible, setIsUserFormVisible] = useState(false);
   const [users, setUsers] = useState<string[]>([]);
 
+  // initial loading from localStorage
+  useEffect(() => {
+    const savedUsers = storage.getUsers();
+
+    if (savedUsers && savedUsers.length > 0) {
+      setUsers(savedUsers);
+    }
+  }, []);
+
+  // serialize users
+  useEffect(() => {
+    if (users && users.length > 0) {
+      storage.setUsers(users);
+    }
+  }, [users]);
+
   const showUserForm = () => setIsUserFormVisible(true);
   const hideUserForm = () => setIsUserFormVisible(false);
-  const handleCreateUserSubmit = (username: string) => {
-    // check that user does not exist on the list
 
-    if (username) {
+  const handleCreateUserSubmit = (user: string) => {
+    // TODO: check that user does not exist on the list
+    if (user) {
       setUsers((users) => {
-        if (users.includes(username)) {
+        if (users.includes(user)) {
           return users;
         }
 
-        return users.concat([username]);
+        return [...users, user];
       });
     }
 
-    // setTimeout(() => {
     hideUserForm();
-    // }, 500);
   };
 
+  const handleRemoveUser =
+    (user: string): React.MouseEventHandler =>
+    (e) => {
+      e.preventDefault();
+
+      removeUser(user);
+    };
+
   const handleClear = () => {
-    localStorage.remove('users');
+    storage.removeAllUsers();
 
     setUsers([]);
   };
 
-  // initial loading from localStorage
-  useEffect(() => {
-    const savedUsers: string[] | null = JSON.parse(`${localStorage.getItem('users')}`);
+  const removeUser = (user: string) => {
+    setUsers((oldUsers) => oldUsers.filter((name) => name !== user));
 
-    if (savedUsers) {
-      setUsers(savedUsers);
-    }
-  }, []);
+    storage.removeUser(user);
+  };
 
   return (
     <div className="dashboard">
@@ -68,7 +81,10 @@ const Dashboard: React.FC = () => {
             {users.map((user, index) => (
               <li className="list--item" key={index}>
                 <Link className="list--link" to={`/chat/${user.toLowerCase()}`}>
-                  {user}
+                  {user}{' '}
+                  <span onClick={handleRemoveUser(user)} className="list--link-close-icon">
+                    +
+                  </span>
                 </Link>
               </li>
             ))}

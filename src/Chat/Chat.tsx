@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
 import { api, storage } from '../utils';
+import useAudio from './useAudio';
 
 type UserParams = {
   userID: string;
@@ -12,10 +13,11 @@ type UserParams = {
 interface Message {
   type: 'req' | 'res';
   text: string;
+  src?: string;
 }
 
 const traceToMessages = (trace: GeneralTrace[]): Message[] => {
-  return trace.filter(({ type }) => type === 'speak').map(({ payload }) => ({ text: payload.message, type: 'res' }));
+  return trace.filter(({ type }) => type === 'speak').map(({ payload }) => ({ text: payload.message, type: 'res', src: payload.src }));
 };
 
 const Chat: React.FC = () => {
@@ -25,16 +27,26 @@ const Chat: React.FC = () => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const lastRow = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    scrollToLastElement();
-    saveMessagesToStorage();
-  }, [messages]);
+  const { play, pause, updateSource } = useAudio();
 
   useEffect(() => {
     validateUser();
     initialDataLoading();
   }, []);
+
+  useEffect(() => {
+    scrollToLastElement();
+    saveMessagesToStorage();
+
+    if (messages && messages.length > 0) {
+      const { src } = messages[messages.length - 1];
+
+      if (src) {
+        updateSource(src);
+        play();
+      }
+    }
+  }, [messages]);
 
   const scrollToLastElement = () => {
     if (!lastRow.current) return;
@@ -103,6 +115,7 @@ const Chat: React.FC = () => {
 
   const handleSendMessage = async () => {
     clearInput();
+    pause();
 
     setMessages((oldMessages) => {
       const newMessage: Message = {

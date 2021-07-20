@@ -53,7 +53,12 @@ export const removeUser = (userID: string, messages: string[]): RemoveUserAction
   };
 };
 
-export const newMessage = (userID: types.User['id'], type: types.Message['type'], text: types.Message['text']): NewMessageAction => {
+export const newMessage = (
+  userID: types.User['id'],
+  type: types.Message['type'],
+  text: types.Message['text'],
+  src?: types.Message['src']
+): NewMessageAction => {
   const id = `message-${getUniqueLikePostfix()}`;
 
   return {
@@ -63,6 +68,7 @@ export const newMessage = (userID: types.User['id'], type: types.Message['type']
       id,
       type,
       text,
+      src,
     },
   };
 };

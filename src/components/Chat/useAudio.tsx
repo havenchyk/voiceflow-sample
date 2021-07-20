@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 const useAudio = (src?: string) => {
   const node = useRef(new Audio(src));
@@ -12,6 +12,12 @@ const useAudio = (src?: string) => {
   const updateSource = (src: string) => {
     node.current.src = src;
   };
+
+  useEffect(() => {
+    return function cleanup() {
+      node.current.pause();
+    };
+  }, []);
 
   return {
     play,

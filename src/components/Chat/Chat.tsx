@@ -15,13 +15,14 @@ type UserParams = {
   userID: string;
 };
 
-// const traceToMessages = (trace: GeneralTrace[]): types.Message[] => {
-//   return trace.filter(({ type }) => type === 'speak').map(({ payload }) => ({ text: payload.message, type: 'res', src: payload.src }));
-// };
+const traceToMessages = (trace: GeneralTrace[]): types.Message[] => {
+  return trace.filter(({ type }) => type === 'speak').map(({ payload }) => ({ text: payload.message, type: 'res', src: payload.src, id: 'temp-id' }));
+};
 
 const Chat: FC = () => {
   const history = useHistory();
   const { userID } = useParams<UserParams>();
+  const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>();
   const [messages, setMessages] = useState<types.Message[]>([]);
 
@@ -31,7 +32,6 @@ const Chat: FC = () => {
 
   useEffect(() => {
     validateUser();
-    // initialDataLoading();
   }, []);
 
   useEffect(() => {
@@ -42,24 +42,38 @@ const Chat: FC = () => {
     const userMessages = user.messages.map((messageID) => state.messages[messageID]);
 
     setMessages(userMessages);
+
+    if (loading) {
+      setLoading(false);
+    }
   }, [state.users]);
 
-  // useEffect(() => {
-  //   saveMessagesToStorage();
+  useEffect(() => {
+    if (loading) return;
 
-  //   if (messages && messages.length > 0) {
-  //     const { src } = messages[messages.length - 1];
+    if (messages.length === 0 || messages[messages.length - 1].type !== 'res') {
+      fetchInitialData();
+    }
+  }, [loading]);
 
-  //     if (src) {
-  //       updateSource(src);
-  //       // play();
-  //     }
-  //   }
-  // }, [messages]);
+  useEffect(() => {
+    if (loading) return;
 
-  // if (!store) {
-  //   return <div>Loading...</div>;
-  // }
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+
+      updateSoundSourceAndPlay(lastMessage.src);
+    }
+  }, [messages.length, loading]);
+
+  function updateSoundSourceAndPlay(src?: string) {
+    if (src) {
+      updateSource(src);
+      play();
+    } else {
+      pause();
+    }
+  }
 
   const validateUser = () => {
     const user = state.users.byID[userID];
@@ -75,36 +89,34 @@ const Chat: FC = () => {
     }, 200);
   };
 
-  const initialDataLoading = () => {
-    const messages = storage.getMessages(userID);
+  const fetchInitialData = () => {
+    api
+      .launch(userID)
+      .then((traceFromLaunch) => {
+        const messages = traceToMessages(traceFromLaunch);
 
-    if (messages && messages.length > 0) {
-      // setMessages(messages);
-    } else {
-      setTimeout(() => {
-        // setMessages([]);
+        const newMessage = messages[messages.length - 1];
 
-        console.log('messages are loaded');
-      }, 500);
-      // api
-      //   .launch(userID)
-      //   .then((traceFromLaunch) => {
-      //     const messages = traceToMessages(traceFromLaunch);
-      //     return setMessages(messages);
-      //   })
-      //   .catch(console.error);
-    }
+        return dispatch(actions.newMessage(userID, 'res', newMessage.text, newMessage.src));
+      })
+      .catch(console.error);
   };
 
   const handleNewMessage = (text: string) => {
     dispatch(actions.newMessage(userID, 'req', text));
+
+    sendMessage(text);
   };
 
-  const sendMessage = async () => {
+  const sendMessage = async (text: string) => {
     try {
-      // const trace = await api.interact(message, userID);
-      // const respMessages = traceToMessages(trace);
-      // setMessages((oldMessages) => oldMessages.concat(respMessages));
+      // can be in thunk
+      const trace = await api.interact(text, userID);
+      const respMessages = traceToMessages(trace);
+
+      const newMessage = respMessages[respMessages.length - 1];
+
+      dispatch(actions.newMessage(userID, 'res', newMessage.text, newMessage.src));
     } catch (e) {
       console.error(e.message);
     }
@@ -112,9 +124,8 @@ const Chat: FC = () => {
 
   return (
     <div className={styles.root}>
-      {/* likely move it to the header */}
       {!userName && <h4>Loading...</h4>}
-      {userName && <h4>This is a conversation for "{userName}"</h4>}
+      {userName && <h4>Conversation for "{userName}"</h4>}
 
       <MessageList messages={messages} />
       <NewMessage onSubmit={handleNewMessage} />

@@ -1,6 +1,6 @@
-import './styles.css';
-
 import React, { ChangeEventHandler, FC, useState } from 'react';
+
+import styles from './styles.module.css';
 
 interface Props {
   onSubmit: (message: string) => void;
@@ -24,8 +24,8 @@ const NewMessage: FC<Props> = ({ onSubmit }) => {
   };
 
   return (
-    <div className="chat-actions">
-      <textarea value={message} onChange={handleChange} className="chat-actions--input" placeholder="user input here" rows={4} autoComplete="none" />
+    <div className={styles.root}>
+      <textarea value={message} onChange={handleChange} className={styles.input} placeholder="user input here" rows={4} autoComplete="none" />
       <button disabled={!message} onClick={handleSendMessage} className="button">
         Send
       </button>

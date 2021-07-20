@@ -1,15 +1,15 @@
-.message-list {
+.root {
   flex-grow: 1;
   overflow-y: auto;
   margin-bottom: 1.5em;
   width: 30em;
 }
 
-.message-list--message {
+.message {
   margin-bottom: 0.5em;
 }
 
-.message-list--message span {
+.message span {
   padding: 1em;
   font-size: 1.5em;
   background-color: aquamarine;
@@ -17,10 +17,10 @@
   display: inline-block;
 }
 
-.message-list--message-right {
+.messageRight {
   text-align: right;
 }
 
-.message-list--message-right span {
+.messageRight span {
   background-color: palevioletred;
 }

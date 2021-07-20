@@ -1,7 +1,7 @@
 import React, { createContext, FC, ReactNode, useEffect, useReducer } from 'react';
 
-import { Action } from './actions';
-import { rootReducer, State } from './store';
+import { Action } from '../actions';
+import { rootReducer, State } from '../store';
 
 const initialState: State = {
   users: {

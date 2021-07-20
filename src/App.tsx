@@ -3,11 +3,11 @@ import './App.css';
 import React, { FC } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 
-import Chat from './Chat';
-import Dashboard from './Dashboard';
-import Data from './Data';
-import Footer from './Footer';
-import Header from './Header';
+import Chat from './components/Chat';
+import Dashboard from './components/Dashboard';
+import Data from './components/Data';
+import Footer from './components/Footer';
+import Header from './components/Header';
 
 const DASHBOARD_ROUTE = '/dashboard';
 const CHAT_ROUTE = '/chat/:userID';

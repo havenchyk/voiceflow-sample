@@ -1,16 +1,16 @@
-.create-user--row {
+.row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 1em;
 }
 
-.create-user--button {
+.button {
   width: 40%;
   text-align: center;
 }
 
-.create-user--actions {
+.actions {
   display: flex;
   justify-content: space-between;
 };

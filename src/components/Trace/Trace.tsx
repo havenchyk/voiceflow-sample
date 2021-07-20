@@ -2,7 +2,7 @@ import { ChoiceTrace, GeneralTrace, PathTrace } from '@voiceflow/general-types';
 import { ImageStepData } from '@voiceflow/general-types/build/nodes/visual';
 import React from 'react';
 
-import { api } from '../utils';
+import { api } from '../../utils';
 
 /**
  * This file is needed for storing the logic for rendering trace by type (wiht buttons)

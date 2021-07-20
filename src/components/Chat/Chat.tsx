@@ -1,15 +1,14 @@
-import './styles.css';
-
 import { GeneralTrace } from '@voiceflow/general-types';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
-import * as actions from '../actions';
+import * as actions from '../../actions';
+import * as types from '../../types';
+import { api, storage } from '../../utils';
 import { DataContext } from '../Data';
 import MessageList from '../MessageList';
 import NewMessage from '../NewMessage';
-import * as types from '../types';
-import { api, storage } from '../utils';
+import styles from './styles.module.css';
 import useAudio from './useAudio';
 
 type UserParams = {
@@ -112,7 +111,7 @@ const Chat: FC = () => {
   };
 
   return (
-    <div className="chat">
+    <div className={styles.root}>
       {/* likely move it to the header */}
       {!userName && <h4>Loading...</h4>}
       {userName && <h4>This is a conversation for "{userName}"</h4>}

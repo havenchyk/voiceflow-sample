@@ -1,9 +1,8 @@
-import './styles.css';
-
 import React, { ChangeEventHandler, FC, FormEventHandler, useContext, useEffect, useRef, useState } from 'react';
 
-import * as actions from '../actions';
+import * as actions from '../../actions';
 import { DataContext } from '../Data';
+import styles from './styles.module.css';
 
 interface Props {
   onSubmit: () => void;
@@ -37,16 +36,16 @@ const CreateUser: FC<Props> = ({ onSubmit }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <label className="create-user--row">
+      <label className={styles.row}>
         Username: <input ref={inputNode} value={name} onChange={handleChange} />
       </label>
 
-      <div className="create-user--actions">
+      <div className={styles.actions}>
         <button className="button create-user--button" disabled={!name}>
           Add
         </button>
 
-        <button type="button" className="create-user--button button button-secondary" onClick={handleClose}>
+        <button type="button" className={`${styles.button} button button-secondary`} onClick={handleClose}>
           Close
         </button>
       </div>

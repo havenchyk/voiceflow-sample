@@ -1,8 +1,7 @@
-import './styles.css';
-
 import React, { FC, useEffect, useRef } from 'react';
 
-import * as types from '../types';
+import * as types from '../../types';
+import styles from './styles.module.css';
 
 interface Props {
   messages: types.Message[];
@@ -23,20 +22,20 @@ const MessageList: FC<Props> = ({ messages }) => {
   };
 
   return (
-    <div className="message-list">
+    <div className={styles.root}>
       {messages.map((message, index) => {
         // last item is special
         if (index === messages.length - 1) return null;
 
         return (
-          <div className={`message-list--message ${index % 2 === 0 ? '' : 'message-list--message-right'}`} key={index}>
+          <div className={`${styles.message} ${index % 2 === 0 ? '' : styles.messageRight}`} key={index}>
             <span>{message.text}</span>
           </div>
         );
       })}
 
       {messages.length > 0 && (
-        <div ref={lastRow} className={`.message-list--message ${messages.length % 2 === 0 ? '.message-list--message-right' : ''}`}>
+        <div ref={lastRow} className={`${styles.message} ${messages.length % 2 === 0 ? styles.messageRight : ''}`}>
           <span>{messages[messages.length - 1].text}</span>
         </div>
       )}

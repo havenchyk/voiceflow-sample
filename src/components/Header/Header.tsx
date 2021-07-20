@@ -1,7 +1,7 @@
-import './styles.css';
-
 import React, { FC } from 'react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
+
+import styles from './styles.module.css';
 
 const pathToTitleMap: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -19,11 +19,11 @@ const Header: FC = () => {
   const title = pathToTitleMap[path as string] ?? 'Default title';
 
   return (
-    <header className="header">
+    <header className={styles.root}>
       <Link to="/">
         <img alt="logo" height="56" src={`${process.env.PUBLIC_URL}/pizza.png`} />
       </Link>
-      <span className="header--title">{title}</span>
+      <span className={styles.title}>{title}</span>
     </header>
   );
 };

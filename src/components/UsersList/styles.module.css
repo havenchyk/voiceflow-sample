@@ -1,9 +1,9 @@
-.user-list-wrapper {
+.root {
   overflow: hidden;
   padding: 0.5em 0;
 }
 
-.user-list {
+.list {
   display: inline-flex;
   flex-direction: column;
   width: 20em;
@@ -16,27 +16,27 @@
   overflow-y: auto;
 }
 
-.user-list--item {
+.item {
   list-style: none;
   /* background-color:steelblue; */
   transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   border-top: 1px solid rgba(0, 0, 0, 0.12);
 }
 
-.user-list--item.list--item-empty {
+.item.emptyItem {
   padding: 4em 2em;
 }
 
-.user-list--item:first-child:not(.user-list--item-empty) {
+.item:first-child:not(.emptyItem) {
   padding-top: 0.5em;
   border-top: none;
 }
 
-.user-list--item:last-child:not(.user-list--item-empty) {
+.item:last-child:not(.emptyItem) {
   padding-bottom: 0.5em;
 }
 
-.user-list--link {
+.link {
   text-decoration: none;
   color: white;
   display: flex;
@@ -46,11 +46,11 @@
   position: relative;
 }
 
-.user-list--link:hover .user-list--link-cross-icon {
+.link:hover .crossIcon {
   visibility: visible;
 }
 
-.user-list--link-cross-icon {
+.crossIcon {
   transform: rotate(45deg);
   position: absolute;
   right: 1.5em;
@@ -58,16 +58,16 @@
   visibility: hidden;
 }
 
-.user-list--link-cross-icon:hover {
+.crossIcon:hover {
   color: red;
 }
 
-.user-list--link:after {
+.link:after {
   content: '💬';
   position: absolute;
   right: 1em;
 }
 
-.user-list--link:hover {
+.link:hover {
   background-color: rgba(0, 0, 0, 0.04);
 }

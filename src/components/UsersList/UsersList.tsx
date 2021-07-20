@@ -1,14 +1,13 @@
-import './styles.css';
-
 import React, { MouseEvent, MouseEventHandler, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
-import * as actions from '../actions';
+import * as actions from '../../actions';
+import * as types from '../../types';
 import { DataContext } from '../Data';
-import * as types from '../types';
+import styles from './styles.module.css';
 
 const CrossIcon = ({ onClick }: { onClick: (e: MouseEvent) => void }) => (
-  <span onClick={onClick} className="user-list--link-cross-icon">
+  <span onClick={onClick} className={styles.crossIcon}>
     +
   </span>
 );
@@ -25,10 +24,10 @@ const UsersList: React.FC = () => {
     };
 
   return (
-    <div className="list-wrapper">
-      <ul className="user-list">
+    <div className={styles.root}>
+      <ul className={styles.list}>
         {state.users.ids.length === 0 && (
-          <li className="user-list--item user-list--item-empty" key="no-users">
+          <li className={`${styles.item} ${styles.emptyItem}`} key="no-users">
             Please add a user to start a chat
           </li>
         )}
@@ -36,8 +35,8 @@ const UsersList: React.FC = () => {
           const user = state.users.byID[userID];
 
           return (
-            <li className="user-list--item" key={index}>
-              <Link className="user-list--link" to={`/chat/${user.id}`}>
+            <li className={styles.item} key={index}>
+              <Link className={styles.link} to={`/chat/${user.id}`}>
                 {user.name} <CrossIcon onClick={handleRemoveUser(user)} />
               </Link>
             </li>

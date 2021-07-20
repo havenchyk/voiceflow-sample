@@ -1,3 +1,4 @@
+// eslint-disable import/prefer-default-export
 import { GeneralTrace, LaunchRequest, RequestType, TextRequest } from '@voiceflow/general-types';
 import axios from 'axios';
 
@@ -6,7 +7,6 @@ const APIKey = process.env.REACT_APP_API_KEY;
 
 // Use a launch request to reset the user and start from the first block in your Voiceflow project.
 
-// eslint-disable-next-line import/prefer-default-export
 export const interact = async (message: string, userID: string): Promise<GeneralTrace[]> => {
   const request: TextRequest = { type: RequestType.TEXT, payload: message };
 

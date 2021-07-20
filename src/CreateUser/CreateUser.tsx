@@ -1,12 +1,16 @@
 import './styles.css';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ChangeEventHandler, FC, FormEventHandler, useContext, useEffect, useRef, useState } from 'react';
+
+import * as actions from '../actions';
+import { DataContext } from '../Data';
 
 interface Props {
-  onSubmit: (username: string) => void;
+  onSubmit: () => void;
 }
 
-const CreateUser = ({ onSubmit }: Props) => {
+const CreateUser: FC<Props> = ({ onSubmit }) => {
+  const { dispatch } = useContext(DataContext);
   const [name, setName] = useState('');
   const inputNode = useRef<HTMLInputElement>(null);
 
@@ -14,18 +18,21 @@ const CreateUser = ({ onSubmit }: Props) => {
     inputNode.current?.focus();
   }, []);
 
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     setName(e.target.value);
   };
 
-  const handleClose: React.FormEventHandler<HTMLButtonElement> = () => {
-    onSubmit('');
+  const handleClose: FormEventHandler<HTMLButtonElement> = () => {
+    // do nothing but hide the form
+    onSubmit();
   };
 
-  const handleSubmit: React.FormEventHandler = (e) => {
+  const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    onSubmit(name);
+    dispatch(actions.addUser(name));
+
+    onSubmit();
   };
 
   return (

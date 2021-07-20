@@ -1,70 +1,35 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import './styles.css';
 
-import React, { useEffect, useState } from 'react';
+import React, { FC, MouseEventHandler, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import * as actions from '../actions';
 import CreateUser from '../CreateUser';
-import { storage } from '../utils';
+import { DataContext } from '../Data';
+import * as types from '../types';
 
 // TODO: check if the users on the list before redirecting to the chat route
-const Dashboard: React.FC = () => {
+const Dashboard: FC = () => {
   const [isUserFormVisible, setIsUserFormVisible] = useState(false);
-  const [users, setUsers] = useState<string[]>([]);
-
-  // initial loading from localStorage
-  useEffect(() => {
-    const savedUsers = storage.getUsers();
-
-    if (savedUsers && savedUsers.length > 0) {
-      setUsers(savedUsers);
-    }
-  }, []);
-
-  // serialize users
-  useEffect(() => {
-    if (users && users.length > 0) {
-      storage.setUsers(users);
-    }
-  }, [users]);
+  const { state, dispatch } = useContext(DataContext);
 
   const showUserForm = () => setIsUserFormVisible(true);
   const hideUserForm = () => setIsUserFormVisible(false);
 
-  const handleCreateUserSubmit = (user: string) => {
-    // TODO: check that user does not exist on the list
-    if (user) {
-      setUsers((users) => {
-        if (users.includes(user)) {
-          return users;
-        }
-
-        return [...users, user];
-      });
-    }
-
+  const handleCreateUserSubmit = () => {
     hideUserForm();
   };
 
   const handleRemoveUser =
-    (user: string): React.MouseEventHandler =>
+    (user: types.User): MouseEventHandler =>
     (e) => {
       e.preventDefault();
 
-      removeUser(user);
+      dispatch(actions.removeUser(user.id, user.messages));
     };
 
-  const handleClear = () => {
-    storage.removeAllUsers();
-
-    setUsers([]);
-  };
-
-  const removeUser = (user: string) => {
-    setUsers((oldUsers) => oldUsers.filter((name) => name !== user));
-
-    storage.removeUser(user);
+  const handleClearAll = () => {
+    dispatch(actions.clearAll());
   };
 
   return (
@@ -73,15 +38,15 @@ const Dashboard: React.FC = () => {
       <div className="dashboard--content">
         <div className="list-wrapper">
           <ul className="list">
-            {users.length === 0 && (
+            {Object.keys(state.users).length === 0 && (
               <li className="list--item list--item-empty" key="no-users">
                 Please add a user to start a chat
               </li>
             )}
-            {users.map((user, index) => (
+            {Object.values(state.users).map((user, index) => (
               <li className="list--item" key={index}>
-                <Link className="list--link" to={`/chat/${user.toLowerCase()}`}>
-                  {user}{' '}
+                <Link className="list--link" to={`/chat/${user.id}`}>
+                  {user.name}{' '}
                   <span onClick={handleRemoveUser(user)} className="list--link-close-icon">
                     +
                   </span>
@@ -97,8 +62,8 @@ const Dashboard: React.FC = () => {
           <button className="button" onClick={showUserForm}>
             Create a New User
           </button>
-          <button className="button button-secondary" onClick={handleClear}>
-            Clear users
+          <button className="button button-secondary" onClick={handleClearAll}>
+            Clear all users
           </button>
         </div>
 

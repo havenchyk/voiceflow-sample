@@ -1,132 +1,114 @@
 import './styles.css';
 
 import { GeneralTrace } from '@voiceflow/general-types';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
+import * as actions from '../actions';
+import { DataContext } from '../Data';
+import MessageList from '../MessageList';
+import NewMessage from '../NewMessage';
+import * as types from '../types';
 import { api, storage } from '../utils';
 import useAudio from './useAudio';
 
 type UserParams = {
   userID: string;
 };
-interface Message {
-  type: 'req' | 'res';
-  text: string;
-  src?: string;
-}
 
-const traceToMessages = (trace: GeneralTrace[]): Message[] => {
-  return trace.filter(({ type }) => type === 'speak').map(({ payload }) => ({ text: payload.message, type: 'res', src: payload.src }));
-};
+// const traceToMessages = (trace: GeneralTrace[]): types.Message[] => {
+//   return trace.filter(({ type }) => type === 'speak').map(({ payload }) => ({ text: payload.message, type: 'res', src: payload.src }));
+// };
 
-const Chat: React.FC = () => {
+const Chat: FC = () => {
   const history = useHistory();
   const { userID } = useParams<UserParams>();
   const [userName, setUserName] = useState<string>();
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
-  const lastRow = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<types.Message[]>([]);
+
+  // call functions on some action
   const { play, pause, updateSource } = useAudio();
+  const { state, dispatch } = useContext(DataContext);
 
   useEffect(() => {
     validateUser();
-    initialDataLoading();
+    // initialDataLoading();
   }, []);
 
   useEffect(() => {
-    scrollToLastElement();
-    saveMessagesToStorage();
+    const user = state.users[userID];
 
-    if (messages && messages.length > 0) {
-      const { src } = messages[messages.length - 1];
+    if (!user) return;
 
-      if (src) {
-        updateSource(src);
-        play();
-      }
-    }
-  }, [messages]);
+    const userMessages = user.messages.map((messageID) => state.messages[messageID]);
 
-  const scrollToLastElement = () => {
-    if (!lastRow.current) return;
+    setMessages(userMessages);
+  }, [state.users]);
 
-    lastRow.current.scrollIntoView();
-  };
+  // useEffect(() => {
+  //   saveMessagesToStorage();
 
-  const saveMessagesToStorage = () => {
-    if (messages && messages.length > 0) {
-      storage.setMessages(userID, messages);
-    }
-  };
+  //   if (messages && messages.length > 0) {
+  //     const { src } = messages[messages.length - 1];
+
+  //     if (src) {
+  //       updateSource(src);
+  //       // play();
+  //     }
+  //   }
+  // }, [messages]);
+
+  // if (!store) {
+  //   return <div>Loading...</div>;
+  // }
 
   const validateUser = () => {
-    const users = storage.getUsers();
-
-    if (!users) return;
-
-    const user = users.find((user) => user.toLowerCase() === userID);
+    const user = state.users[userID];
 
     if (!user) {
       history.replace('/dashboard');
+      return;
     }
 
     // only to simulate real time requests
     setTimeout(() => {
-      setUserName(user);
-    }, 1000);
+      setUserName(user.name);
+    }, 200);
   };
 
   const initialDataLoading = () => {
     const messages = storage.getMessages(userID);
 
     if (messages && messages.length > 0) {
-      setMessages(messages);
+      // setMessages(messages);
     } else {
-      api
-        .launch(userID)
-        .then((traceFromLaunch) => {
-          const messages = traceToMessages(traceFromLaunch);
+      setTimeout(() => {
+        // setMessages([]);
 
-          return setMessages(messages);
-        })
-        .catch(console.error);
+        console.log('messages are loaded');
+      }, 500);
+      // api
+      //   .launch(userID)
+      //   .then((traceFromLaunch) => {
+      //     const messages = traceToMessages(traceFromLaunch);
+      //     return setMessages(messages);
+      //   })
+      //   .catch(console.error);
     }
   };
 
-  const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-    setMessage(e.target.value);
-  };
-
-  const clearInput = () => {
-    setMessage('');
+  const handleNewMessage = (text: string) => {
+    dispatch(actions.newMessage(userID, 'req', text));
   };
 
   const sendMessage = async () => {
     try {
-      const trace = await api.interact(message, userID);
-      const respMessages = traceToMessages(trace);
-
-      setMessages((oldMessages) => oldMessages.concat(respMessages));
+      // const trace = await api.interact(message, userID);
+      // const respMessages = traceToMessages(trace);
+      // setMessages((oldMessages) => oldMessages.concat(respMessages));
     } catch (e) {
       console.error(e.message);
     }
-  };
-
-  const handleSendMessage = async () => {
-    clearInput();
-    pause();
-
-    setMessages((oldMessages) => {
-      const newMessage: Message = {
-        text: message,
-        type: 'req',
-      };
-
-      return [...oldMessages, newMessage];
-    });
-
-    return sendMessage();
   };
 
   return (
@@ -135,55 +117,8 @@ const Chat: React.FC = () => {
       {!userName && <h4>Loading...</h4>}
       {userName && <h4>This is a conversation for "{userName}"</h4>}
 
-      <div className="chat--messages">
-        {messages.map((message, index) => {
-          // last item is special
-          if (index === messages.length - 1) return null;
-
-          return (
-            <div className={`chat--message ${index % 2 === 0 ? '' : 'chat--message-right'}`} key={index}>
-              <span>{message.text}</span>
-            </div>
-          );
-        })}
-        {messages.length > 0 && (
-          <div ref={lastRow} className={`chat--message ${messages.length % 2 === 0 ? 'chat--message-right' : ''}`}>
-            <span>{messages[messages.length - 1].text}</span>
-          </div>
-        )}
-      </div>
-
-      <div className="chat--actions">
-        <textarea value={message} onChange={handleChange} className="chat--input" placeholder="user input here" rows={4} autoComplete="none" />
-        <button disabled={!message} onClick={handleSendMessage} className="button chat--input-button">
-          Send
-        </button>
-        {/*
-        <button
-          className="button"
-          onClick={() => {
-            api.fetchState(userID);
-          }}
-        >
-          fetch state
-        </button>
-        <button
-          className="button"
-          onClick={() => {
-            api.launch(userID);
-          }}
-        >
-          launch
-        </button>
-        <button
-          className="button"
-          onClick={() => {
-            api.deleteState(userID);
-          }}
-        >
-          delete state
-        </button> */}
-      </div>
+      <MessageList messages={messages} />
+      <NewMessage onSubmit={handleNewMessage} />
     </div>
   );
 };

@@ -1,0 +1,17 @@
+.chat-actions {
+  flex-grow: 0;
+  padding-bottom: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.chat-actions--input {
+  padding: 0.5em;
+  border-radius: 4px;
+  /* yes, it's a magic value */
+  width: 18.75em;
+  border: 1px solid black;
+  resize: none;
+}

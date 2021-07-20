@@ -11,52 +11,6 @@
   flex-grow: 0;
 }
 
-.chat--messages {
-  flex-grow: 1;
-  overflow-y: auto;
-  margin-bottom: 1.5em;
-  width: 30em;
-}
-
-
-.chat--actions {
-  flex-grow: 0;
-  padding-bottom: 2em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-}
-
-.chat--input {
-  padding: 0.5em;
-  border-radius: 4px;
-  /* yes, it's a magic value */
-  width: 18.75em;
-  border: 1px solid black;
-  resize: none;
-}
-
 .separator {
   border: 1px solid #ddd;
-}
-
-.chat--message {
-  margin-bottom: 0.5em;
-}
-
-.chat--message span {
-  padding: 1em;
-  font-size: 1.5em;
-  background-color: aquamarine;
-  border-radius: 1em;
-  display: inline-block;
-}
-
-.chat--message-right {
-  text-align: right;
-}
-
-.chat--message-right span {
-  background-color: palevioletred;
 }

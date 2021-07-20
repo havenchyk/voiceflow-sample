@@ -1,8 +1,8 @@
 import './styles.css';
 
-import React from 'react';
+import React, { FC } from 'react';
 
-const Footer = () => {
+const Footer: FC = () => {
   return <footer className="footer">© 2021 Pizza Inc. All rights reserved.</footer>;
 };
 

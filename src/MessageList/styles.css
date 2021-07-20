@@ -1,0 +1,26 @@
+.message-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 1.5em;
+  width: 30em;
+}
+
+.message-list--message {
+  margin-bottom: 0.5em;
+}
+
+.message-list--message span {
+  padding: 1em;
+  font-size: 1.5em;
+  background-color: aquamarine;
+  border-radius: 1em;
+  display: inline-block;
+}
+
+.message-list--message-right {
+  text-align: right;
+}
+
+.message-list--message-right span {
+  background-color: palevioletred;
+}

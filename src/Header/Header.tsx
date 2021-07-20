@@ -1,6 +1,6 @@
 import './styles.css';
 
-import React from 'react';
+import React, { FC } from 'react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
 
 const pathToTitleMap: Record<string, string> = {
@@ -8,7 +8,7 @@ const pathToTitleMap: Record<string, string> = {
   '/chat/:userID': 'Chat',
 };
 
-const Header = () => {
+const Header: FC = () => {
   const location = useLocation();
   const path = Object.keys(pathToTitleMap).find((path) =>
     matchPath(location.pathname, {
@@ -16,7 +16,6 @@ const Header = () => {
     })
   );
 
-  // TODO: check types
   const title = pathToTitleMap[path as string] ?? 'Default title';
 
   return (

@@ -9,7 +9,10 @@ type StateKeys = keyof State;
 const combineReducers = (reducers: any) =>
   function combinedReducer(state: State, action: Action) {
     const newState: State = {
-      users: {},
+      users: {
+        ids: [],
+        byID: {},
+      },
       messages: {},
     };
 

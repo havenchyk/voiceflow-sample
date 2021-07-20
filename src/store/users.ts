@@ -1,22 +1,41 @@
 /* eslint-disable import/prefer-default-export */
 import { Action, State } from './types';
 
-const initialState = {};
+const initialState = {
+  ids: [],
+  byID: {},
+};
 
 export const usersReducer = (state: State['users'] = initialState, action: Action): State['users'] => {
   switch (action.type) {
     case 'ADD_USER':
-      return { ...state, [action.payload.id]: { ...action.payload, messages: [] } };
+      return {
+        ...state,
+        ids: [...state.ids, action.payload.id],
+        byID: {
+          ...state.byID,
+          [action.payload.id]: { ...action.payload, messages: [] },
+        },
+      };
     case 'REMOVE_USER':
-      return Object.fromEntries(Object.entries(state).filter(([id]) => id !== action.payload.userID));
+      return {
+        ids: state.ids.filter((id) => id !== action.payload.userID),
+        byID: Object.fromEntries(Object.entries(state.byID).filter(([id]) => id !== action.payload.userID)),
+      };
     case 'CLEAR_ALL':
-      return {};
+      return {
+        ids: [],
+        byID: {},
+      };
     case 'NEW_MESSAGE':
       return {
         ...state,
-        [action.payload.userID]: {
-          ...state[action.payload.userID],
-          messages: state[action.payload.userID].messages.concat(action.payload.id),
+        byID: {
+          ...state.byID,
+          [action.payload.userID]: {
+            ...state.byID[action.payload.userID],
+            messages: state.byID[action.payload.userID].messages.concat(action.payload.id),
+          },
         },
       };
     default:

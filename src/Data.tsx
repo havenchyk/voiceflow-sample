@@ -4,7 +4,10 @@ import { Action } from './actions';
 import { rootReducer, State } from './store';
 
 const initialState: State = {
-  users: {},
+  users: {
+    ids: [],
+    byID: {},
+  },
   messages: {},
 };
 

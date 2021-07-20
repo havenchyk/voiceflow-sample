@@ -36,7 +36,7 @@ const Chat: FC = () => {
   }, []);
 
   useEffect(() => {
-    const user = state.users[userID];
+    const user = state.users.byID[userID];
 
     if (!user) return;
 
@@ -63,7 +63,7 @@ const Chat: FC = () => {
   // }
 
   const validateUser = () => {
-    const user = state.users[userID];
+    const user = state.users.byID[userID];
 
     if (!user) {
       history.replace('/dashboard');
